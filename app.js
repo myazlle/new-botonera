@@ -10,45 +10,46 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Obtiene los sonidos e imágenes dinámicamente
-fetch('/list-files')
-    .then(response => response.json())
-    .then(data => {
+document.addEventListener("DOMContentLoaded", () => {
+    // Cargar el archivo JSON con la lista de sonidos e imágenes
+    fetch('/assets.json')
+      .then(response => response.json())
+      .then(data => {
         const list = document.getElementById('list');
-        list.innerHTML = ''; // Limpia el contenedor previo
-
-        data.forEach(({ sound, image, isDir }) => {
-            const className = isDir ? 'folder' : '';
-            const filePath = `/sonidos/${sound}`;
-            const imagePath = image ? `/sonidos/images/${image}` : null;
-
-            const item = document.createElement('div');
-            item.className = className;
-            item.setAttribute('title', filePath);
-
-            if (imagePath) {
-                const img = document.createElement('img');
-                img.className = 'audio-icon';
-                img.src = imagePath;
-                img.alt = 'Audio Image';
-                item.appendChild(img);
-            }
-
-            const displayName = sound.indexOf('.') > -1
-                ? sound.substring(0, sound.lastIndexOf('.'))
-                : sound;
-
-            const textNode = document.createTextNode(displayName);
-            item.appendChild(textNode);
-
-            item.addEventListener('click', () => {
-                if (!isDir) {
-                    const audio = new Audio(filePath);
-                    audio.play();
-                }
-            });
-
-            list.appendChild(item);
+        list.innerHTML = ''; // Limpiar la lista existente
+  
+        data.forEach(({ sound, image }) => {
+          const filePath = `/sonidos/${sound}`;  // Ruta del sonido
+          const imagePath = `/sonidos/images/${image}`;  // Ruta de la imagen
+  
+          // Crear un contenedor para cada sonido
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.setAttribute('title', filePath);
+  
+          // Crear la imagen si existe
+          if (image) {
+            const img = document.createElement('img');
+            img.className = 'audio-icon';
+            img.src = imagePath;
+            img.alt = 'Audio Image';
+            item.appendChild(img);
+          }
+  
+          // Mostrar el nombre del archivo de sonido
+          const displayName = sound.split('.')[0];  // Mostrar nombre sin extensión
+          const textNode = document.createTextNode(displayName);
+          item.appendChild(textNode);
+  
+          // Agregar el evento para reproducir el sonido cuando se hace clic
+          item.addEventListener('click', () => {
+            const audio = new Audio(filePath);
+            audio.play();
+          });
+  
+          // Agregar el item a la lista
+          list.appendChild(item);
         });
-    })
-    .catch(error => console.error('Error fetching files:', error));
+      })
+      .catch(error => console.error('Error al cargar la lista de archivos:', error));
+});
