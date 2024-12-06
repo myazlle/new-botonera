@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener("DOMContentLoaded", () => {
     // Cargar el archivo JSON con la lista de sonidos e imágenes
-    fetch('/assets.json')
+    fetch('assets.json')
       .then(response => response.json())
       .then(data => {
         const list = document.getElementById('list');
